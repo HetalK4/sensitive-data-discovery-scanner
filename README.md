@@ -27,12 +27,13 @@ using regular expressions and custom YARA rules, and writes every finding to an 
 | Measure | Count |
 |---|---|
 | Records scanned | 100,000 |
-| Emails flagged | 1,252 |
-| Phone numbers flagged | 1,243 |
-| Secrets flagged (rows) | 1,674 |
+| Emails flagged | 1,226 |
+| Phone numbers flagged | 1,244 |
+| Secrets flagged (rows) | 1,688 |
 
-The data is generated randomly without a fixed seed, so counts differ slightly from run
-to run. Emails and phones are counted as matches. Secrets are counted as rows.
+Both `random` and Faker are seeded with 42, so a re-run should reproduce these counts
+(a different Faker version can change the generated data). Emails and phones are counted
+as matches. Secrets are counted as rows.
 
 ## What these results do and don't show
 
@@ -42,7 +43,7 @@ keep a record of which rows it injected. Working it out from the code:
 - **Emails and phones:** about 1,250 of each were injected, and the counts above are
   close to that.
 - **Credentials: roughly a third of the injected ones are missed.** About 2,500
-  credentials were injected (about 1,250 passwords and 1,250 API keys), but only 1,674
+  credentials were injected (about 1,250 passwords and 1,250 API keys), but only 1,688
   were flagged. The cause is a mismatch between the test data and the rules. The data uses
   three mock API-key formats, and only the AWS-style one is matched. The Google-style mock
   key is 37 characters, while the rule expects 39, and the third format has no rule at
@@ -60,7 +61,6 @@ keep a record of which rows it injected. Working it out from the code:
 
 - Record which rows were injected, so precision and recall can be calculated properly.
 - Fix the Google-style mock key and add a rule for generic secrets.
-- Fix the random seed so results are reproducible.
 - Tighten the phone regex and measure false positives.
 
 ## Running it
